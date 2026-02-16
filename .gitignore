@@ -51,6 +51,7 @@ SourceArt/**/*.tga
 Binaries/
 Plugins/**/Binaries/
 !Plugins/FMODStudio/Binaries
+!Plugins/FMODStudioNiagara/Binaries
 
 #Builds
 Build/*
