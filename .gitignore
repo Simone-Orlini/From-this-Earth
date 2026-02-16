@@ -44,12 +44,12 @@
 .vsconfig
 
 #Precompiled Assets
-SourceArt/**/.png
-SourceArt/**/.tga
+SourceArt/**/*.png
+SourceArt/**/*.tga
 
 #Binary Files
 Binaries/
-Plugins/**/Binaries/
+#Plugins/**/Binaries/
 
 #Builds
 Build/*
@@ -72,7 +72,6 @@ Saved/
 Intermediate/
 
 #Cache files for the editor to use
-DerivedDataCache/
 DerivedDataCache/
 
 #Mac Artifacts
