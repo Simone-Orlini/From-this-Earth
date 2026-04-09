@@ -6,6 +6,7 @@ UENUM(BlueprintType)
 enum class ETileType : uint8
 {
 	Empty,
+	ToReach,
 	Bush,
 	Mud,
 	Fire,
@@ -30,9 +31,10 @@ struct FTileData
 	FTileData():Index(FIntPoint(-1, -1)), bIsWalkable(true), Actor(nullptr), TileType(ETileType::Empty), Outline(nullptr), VFX(nullptr)
 	{
 		Neighbors.Empty();
-		TileStatus.Add(ETileStatus::None);
+		TileStatuses.AddUnique(ETileStatus::None);
 	}
 	
+	UPROPERTY(Editanywhere, BlueprintReadWrite)
 	FIntPoint Index;
 	
 	UPROPERTY(Editanywhere, BlueprintReadWrite)
@@ -48,13 +50,15 @@ struct FTileData
 	ETileType TileType;
 	
 	UPROPERTY(Editanywhere, BlueprintReadWrite)
-	TArray<ETileStatus> TileStatus;
+	TArray<ETileStatus> TileStatuses;
 	
 	UPROPERTY(Editanywhere, BlueprintReadWrite)
-	UStaticMesh* Outline;
+	UStaticMeshComponent* Outline;
 
 	UPROPERTY(Editanywhere, BlueprintReadWrite)
-	class UNiagaraSystem* VFX;
+	class UNiagaraComponent* VFX;
+	
+	// Item
 	
 	int32 AICost() const
 	{
@@ -64,6 +68,8 @@ struct FTileData
 			default:
 			case ETileType::Empty:
 				return 0;
+			case ETileType::ToReach:
+				return -999999; // The AI cant reach the tile ToReach
 			case ETileType::Bush:
 				return 2;
 			case ETileType::Mud:
