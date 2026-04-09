@@ -1,6 +1,10 @@
 # Visual Studio 2015 user specific files
 .vs/*
 
+# Raider files
+.idea/*
+*.iml
+
 # Compiled Object files
 *.slo
 *.lo
