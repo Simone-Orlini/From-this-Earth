@@ -1,0 +1,126 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#include "GameDev_PrototypeV2/GameDev_PrototypeV2.h"
+#include "NiagaraComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "Tile.h"
+
+// Sets default values
+ATile::ATile()
+{
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = false;
+	outline = CreateDefaultSubobject<UStaticMeshComponent>("Outline");
+	outline->SetupAttachment(RootComponent);
+
+	VFX = CreateDefaultSubobject<UNiagaraComponent>("VFX");
+	VFX->SetupAttachment(RootComponent);
+	VFX->SetVisibility(false);
+}
+
+// Called when the game starts or when spawned
+void ATile::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+// Called every frame
+void ATile::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}
+
+void ATile::ApplyEffect()
+{
+	switch (tileData.TileType)
+	{
+	default:
+	case ETileType::Bush:
+	case ETileType::ToReach:
+	case ETileType::Empty:
+		return;
+	case ETileType::Fire:
+		// ApplyDamageToUnit
+		return;
+	case ETileType::Mud:
+		// DecreaseTheCurrentMovementRange
+		return;
+	}
+}
+
+void ATile::UnitEnterTile()
+{
+	if (tileData.TileType == ETileType::ToReach)
+	{
+		VFX->SetVisibility(false);
+		tileData.TileType = ETileType::Empty;
+	}
+	// Chiamare il gamemode e notificare che l'unita e' entrata un tile passandogli il tiledata
+	// Il gamemode riferara' all'unita le informazione che gli servono (Index, TileType, ????)
+}
+
+void ATile::SpawnTile(FVector location, const FTileData& _tileData)
+{
+	InitTileData(_tileData);
+
+	outline = tileData.Outline;
+	VFX = tileData.VFX;
+	SetActorLocation(location);
+}
+
+void ATile::InitTileData(const FTileData& _tileData)
+{
+	tileData = _tileData;
+}
+
+void ATile::UpdateOutline()
+{
+	tileData.TileStatuses.Sort([](const ETileStatus& A, const ETileStatus& B)
+	{
+		return (uint8)A < (uint8)B;
+	});
+
+	ETileStatus s = tileData.TileStatuses[0];
+	if (s == ETileStatus::None)
+	{
+		outline->SetVisibility(false);
+		return;
+	}
+
+	outline->SetVisibility(true);
+
+	FLinearColor colorBorder = FLinearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	FLinearColor colorFill = FLinearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+	switch (s)
+	{
+	case ETileStatus::Highlight:
+		colorBorder = FLinearColor(0.5f, 0.5f, 0.5f);
+		colorFill = colorBorder;
+	case ETileStatus::Hovered:
+		colorBorder = FLinearColor(0.2f, 0.35f, 0.0f);
+		colorFill = colorBorder;
+	case ETileStatus::Movement:
+		colorBorder = FLinearColor(0.15f, 0.45f, 0.0f);
+		colorFill = colorBorder;
+	case ETileStatus::Attack:
+		colorBorder = FLinearColor(0.9f, 0.3f, 0.0f);
+		colorFill = colorBorder;
+	default:
+	case ETileStatus::None:
+		break;
+	}
+
+	outline->CreateAndSetMaterialInstanceDynamic(0)->SetVectorParameterValue(FName("Color_Border"), colorBorder);
+	outline->CreateAndSetMaterialInstanceDynamic(0)->SetVectorParameterValue(FName("Color_Fill"), colorFill);
+}
+
+void ATile::AddOutlineStatus(ETileStatus newStatus)
+{
+	tileData.TileStatuses.AddUnique(newStatus);
+}
+
+void ATile::RemoveOutlineStatus(ETileStatus oldStatus)
+{
+	tileData.TileStatuses.Remove(oldStatus);
+}
