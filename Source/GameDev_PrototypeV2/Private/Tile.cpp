@@ -1,9 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "GameDev_PrototypeV2/GameDev_PrototypeV2.h"
+#include "Tile.h"
 #include "NiagaraComponent.h"
 #include "Components/StaticMeshComponent.h"
-#include "Tile.h"
+
 
 // Sets default values
 ATile::ATile()
@@ -48,15 +49,24 @@ void ATile::ApplyEffect()
 	}
 }
 
-void ATile::UnitEnterTile()
+void ATile::UnitEnterTile(AActor* Actor)
 {
+	/* Quando una unit entra nel tile va prima definito se e' alleata o nemica
+	 * In caso di alleta si deve dire al gamemode se la unit ha raccolto un item
+	 * L'unita deve avere delle informazioni del tile
+	 */
+	
+	
+	// if (Actor == Ally)
+		
+	// The unit reached the ToReachTile
 	if (tileData.TileType == ETileType::ToReach)
 	{
 		VFX->SetVisibility(false);
 		tileData.TileType = ETileType::Empty;
+		
+		// Notify to the maskManager
 	}
-	// Chiamare il gamemode e notificare che l'unita e' entrata un tile passandogli il tiledata
-	// Il gamemode riferara' all'unita le informazione che gli servono (Index, TileType, ????)
 }
 
 void ATile::SpawnTile(FVector location, const FTileData& _tileData)
