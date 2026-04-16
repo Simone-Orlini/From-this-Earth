@@ -42,7 +42,7 @@ public:
 	void ApplyEffect();
 	
 	UFUNCTION(BlueprintCallable,  Category="Grid|Tile")
-	void UnitEnterTile();
+	void UnitEnterTile(AActor* Actor);
 	
 	UFUNCTION(BlueprintCallable,  Category="Grid|Tile")
 	void SpawnTile(FVector location, const FTileData& _tileData);

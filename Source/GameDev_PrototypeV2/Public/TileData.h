@@ -12,6 +12,8 @@ enum class ETileType : uint8
 	Fire,
 };
 
+
+
 UENUM(BlueprintType)
 enum class ETileStatus : uint8
 {
@@ -28,7 +30,7 @@ struct FTileData
 {
 	GENERATED_BODY();
 	
-	FTileData():Index(FIntPoint(-1, -1)), bIsWalkable(true), Actor(nullptr), TileType(ETileType::Empty), Outline(nullptr), VFX(nullptr)
+	FTileData():Index(FIntPoint(-1, -1)), bIsWalkable(true), Actor(nullptr), TileType(ETileType::Empty), Outline(nullptr), VFX(nullptr), Item(nullptr)
 	{
 		Neighbors.Empty();
 		TileStatuses.AddUnique(ETileStatus::None);
@@ -58,7 +60,8 @@ struct FTileData
 	UPROPERTY(Editanywhere, BlueprintReadWrite)
 	class UNiagaraComponent* VFX;
 	
-	// Item
+	UPROPERTY(Editanywhere, BlueprintReadWrite)
+	class AItem* Item;
 	
 	int32 AICost() const
 	{
