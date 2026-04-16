@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "GameDev_PrototypeV2/GameDev_PrototypeV2.h"
 #include "Tile.h"
 #include "NiagaraComponent.h"
 #include "Components/StaticMeshComponent.h"
