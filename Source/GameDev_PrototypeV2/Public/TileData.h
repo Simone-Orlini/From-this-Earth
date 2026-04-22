@@ -13,7 +13,6 @@ enum class ETileType : uint8
 };
 
 
-
 UENUM(BlueprintType)
 enum class ETileStatus : uint8
 {
@@ -26,18 +25,38 @@ enum class ETileStatus : uint8
 };
 
 USTRUCT(BlueprintType)
+struct FGridTileData
+{
+	GENERATED_BODY();
+	
+	FGridTileData():Index(FIntPoint(-1, -1)), Transform(FTransform()), TileType(ETileType::Empty)
+	{
+		
+	};
+	
+	UPROPERTY(Editanywhere, BlueprintReadWrite)
+	FIntPoint Index;
+	
+	UPROPERTY(Editanywhere, BlueprintReadWrite)
+	FTransform Transform;
+	
+	UPROPERTY(Editanywhere, BlueprintReadWrite)
+	ETileType TileType;
+};
+
+USTRUCT(BlueprintType)
 struct FTileData
 {
 	GENERATED_BODY();
 	
-	FTileData():Index(FIntPoint(-1, -1)), bIsWalkable(true), Actor(nullptr), TileType(ETileType::Empty), Outline(nullptr), VFX(nullptr), Item(nullptr)
+	FTileData():GridTileData(), bIsWalkable(true), Actor(nullptr), Outline(nullptr), VFX(nullptr), Item(nullptr)
 	{
 		Neighbors.Empty();
 		TileStatuses.AddUnique(ETileStatus::None);
 	}
 	
 	UPROPERTY(Editanywhere, BlueprintReadWrite)
-	FIntPoint Index;
+	FGridTileData GridTileData;
 	
 	UPROPERTY(Editanywhere, BlueprintReadWrite)
 	TArray<FIntPoint> Neighbors;
@@ -47,9 +66,6 @@ struct FTileData
 	
 	UPROPERTY(Editanywhere, BlueprintReadWrite)
 	AActor* Actor;
-	
-	UPROPERTY(Editanywhere, BlueprintReadWrite)
-	ETileType TileType;
 	
 	UPROPERTY(Editanywhere, BlueprintReadWrite)
 	TArray<ETileStatus> TileStatuses;
@@ -65,7 +81,7 @@ struct FTileData
 	
 	int32 AICost() const
 	{
-		switch (TileType)
+		switch (GridTileData.TileType)
 		{
 			// Valori monentanei da tunare
 			default:
@@ -84,3 +100,6 @@ struct FTileData
 	
 	bool IsOccupied() const {return Actor != nullptr;}
 };
+
+
+

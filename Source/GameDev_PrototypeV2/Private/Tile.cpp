@@ -32,18 +32,19 @@ void ATile::Tick(float DeltaTime)
 
 void ATile::ApplyEffect()
 {
-	switch (tileData.TileType)
+	switch (tileData.GridTileData.TileType)
 	{
 	default:
 	case ETileType::Bush:
 	case ETileType::ToReach:
 	case ETileType::Empty:
+		// Do nothing
 		return;
 	case ETileType::Fire:
-		// ApplyDamageToUnit
+		// ApplyDamageToUnit when enter and at the start of every round
 		return;
 	case ETileType::Mud:
-		// DecreaseTheCurrentMovementRange
+		// Half the Max movement range 5/2 = 2
 		return;
 	}
 }
@@ -59,22 +60,21 @@ void ATile::UnitEnterTile(AActor* Actor)
 	// if (Actor == Ally)
 		
 	// The unit reached the ToReachTile
-	if (tileData.TileType == ETileType::ToReach)
+	if (tileData.GridTileData.TileType == ETileType::ToReach)
 	{
 		VFX->SetVisibility(false);
-		tileData.TileType = ETileType::Empty;
+		tileData.GridTileData.TileType = ETileType::Empty;
 		
 		// Notify to the maskManager
 	}
 }
 
-void ATile::SpawnTile(FVector location, const FTileData& _tileData)
+void ATile::SpawnTile(const FTileData& _tileData)
 {
 	InitTileData(_tileData);
 
 	outline = tileData.Outline;
 	VFX = tileData.VFX;
-	SetActorLocation(location);
 }
 
 void ATile::InitTileData(const FTileData& _tileData)

@@ -33,6 +33,8 @@ private:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	
+	
 
 public:	
 	// Called every frame
@@ -45,7 +47,7 @@ public:
 	void UnitEnterTile(AActor* Actor);
 	
 	UFUNCTION(BlueprintCallable,  Category="Grid|Tile")
-	void SpawnTile(FVector location, const FTileData& _tileData);
+	void SpawnTile(const FTileData& _tileData);
 	
 	UFUNCTION(BlueprintCallable)
 	void InitTileData(const FTileData& _tileData);
@@ -58,6 +60,4 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void RemoveOutlineStatus(ETileStatus oldStatus);
-
-
 };
