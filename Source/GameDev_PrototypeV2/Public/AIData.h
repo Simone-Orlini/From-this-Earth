@@ -18,12 +18,12 @@ struct FAIData
 {
 	GENERATED_BODY();
 	
-	FAIData():ActionType(EActionType::Stay),TileToReach(FTileData()),ActorToAttack(nullptr)
+	FAIData():ActionType(EActionType::Stay),TileToReach(FIntPoint(-1, -1)),ActorToAttack(nullptr)
 	{
 		
 	}
 	
 	EActionType ActionType;
-	FTileData TileToReach;
+	FIntPoint TileToReach;
 	AActor* ActorToAttack;
 };
