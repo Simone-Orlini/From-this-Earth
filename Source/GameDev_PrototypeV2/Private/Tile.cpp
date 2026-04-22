@@ -38,12 +38,13 @@ void ATile::ApplyEffect()
 	case ETileType::Bush:
 	case ETileType::ToReach:
 	case ETileType::Empty:
+		// Do nothing
 		return;
 	case ETileType::Fire:
-		// ApplyDamageToUnit
+		// ApplyDamageToUnit when enter and at the start of every round
 		return;
 	case ETileType::Mud:
-		// DecreaseTheCurrentMovementRange
+		// Half the Max movement range 5/2 = 2
 		return;
 	}
 }
