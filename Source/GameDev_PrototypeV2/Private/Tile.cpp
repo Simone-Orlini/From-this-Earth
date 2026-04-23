@@ -73,7 +73,7 @@ void ATile::SpawnTile(FTileData _tileData)
 {
 	InitTileData(_tileData);
 
-	outline->SetStaticMesh(tileData.Outline->GetStaticMesh());
+	outline->SetStaticMesh(tileData.Outline);
 	VFX = tileData.VFX;
 }
 

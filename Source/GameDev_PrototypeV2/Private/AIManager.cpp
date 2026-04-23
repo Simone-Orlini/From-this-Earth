@@ -3,6 +3,8 @@
 
 #include "AIManager.h"
 #include "TileData.h"
+#include "GamemodeAImanger.h"
+#include "GameFramework/GameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 
 struct FTileInfo
@@ -48,17 +50,16 @@ void UAIManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompo
 
 void UAIManager::StartLogic(const TArray<AActor*>& Enemies)
 {
+	AGameModeBase* GameMode = UGameplayStatics::GetGameMode(GetWorld());
+	
 	TArray<FIntPoint> tileOccupated;
 	TArray<AActor*> pUnitsAttacked;
 	
-	for (const AActor* cEnemy : Enemies)
+	for (AActor* cEnemy : Enemies)
 	{
 		TArray<FTileData> tiles;
-		//tiles.Add(Gamemode.GetTileData(cEnemy))				- Serve accesso al gamemode, in c++ avra' una funziona che verra' ovveridata dalla bp
-		//tiles.Append(Gamemode.BFS(cEnemy))					- Serve accesso al gamemode, in c++ avra' una funziona che verra' ovveridata dalla bp
-		
-		// GetWorld()->GetAuthGameMode();
-		UGameplayStatics::GetGameMode(GetWorld());
+		tiles.Add(IGamemodeAImanger::Execute_GetTileData(GameMode, cEnemy));			
+		tiles.Append(IGamemodeAImanger::Execute_GetTilesFromBFS(GameMode, cEnemy));					
 		
 		TMap<FIntPoint, FTileInfo> tilesInfo;
 		bool bCanAttackWithoutMove = false;
@@ -80,7 +81,7 @@ void UAIManager::StartLogic(const TArray<AActor*>& Enemies)
 			
 			if (!bCanAttackWithoutMove)
 			{
-				CalculateAttackCost(cTile, cEnemy, pUnitsAttacked, info, attackCost);
+				//CalculateAttackCost(cTile, cEnemy, pUnitsAttacked, info, attackCost);
 				
 				if (i == 0 && attackCost > 0.0f)
 				{
@@ -122,8 +123,7 @@ void UAIManager::StartLogic(const TArray<AActor*>& Enemies)
 		
 		AActor* unitToAttack = tilesInfo.Find(rBestTile)->ActorToAttack; 
 		
-		//if (rBestTile == Gamemode.GetData(cEnemy)
-		if (true)
+		if (rBestTile == IGamemodeAImanger::Execute_GetTileData(GameMode, cEnemy).GridTileData.Index)
 		{
 			if (unitToAttack)
 			{
@@ -183,9 +183,11 @@ void UAIManager::StartLogic(const TArray<AActor*>& Enemies)
 	}
 }
 
-void UAIManager::CalculateAttackCost(const FTileData& TileData,  const AActor* Enemy, const TArray<AActor*>& PUnitsAttacked, FTileInfo& OutInfo, float& OutAttackCost)
+void UAIManager::CalculateAttackCost(const FTileData& TileData, AActor* Enemy, const TArray<AActor*>& PUnitsAttacked, FTileInfo& OutInfo, float& OutAttackCost)
 {
-	TArray<AActor*> unitsAttackable; // Gamemode.CheckAttack(tiledata, Enemy)
+	AGameModeBase* GameMode = UGameplayStatics::GetGameMode(GetWorld());
+	
+	TArray<AActor*> unitsAttackable = IGamemodeAImanger::Execute_GetUnitsAttackable(GameMode, TileData, Enemy); // Gamemode.CheckAttack(tiledata, Enemy)
 	
 	for (AActor* cUnit : unitsAttackable)
 	{
@@ -195,7 +197,7 @@ void UAIManager::CalculateAttackCost(const FTileData& TileData,  const AActor* E
 			continue;
 		}
 		
-		float unitDistConst = 0.0f; //GridManager.Path(TileData, cUnit);
+		float unitDistConst = IGamemodeAImanger::Execute_GetPointsFromPath(GameMode, cUnit, TileData).Num(); //GridManager.Path(TileData, cUnit);
 		// float damageCost = 1 - 0.0f; //(FMath::Max(0, cUnit->GetComponentByClass(CombatComponent).currentHealth - Enemy.GetComponentByClass(WeaponCompoennt).damage))
 		float tempAttackCost = unitDistConst * unitDistWeight;
 			                   // damageCost * damageWeight;

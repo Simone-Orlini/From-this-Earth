@@ -19,7 +19,7 @@ public:
 	// Sets default values for this component's properties
 	UAIManager();
 	
-	UPROPERTY(BlueprintReadOnly, Category="AIManager")
+	UPROPERTY(BlueprintReadWrite, Category="AIManager")
 	TMap<AActor*, FAIData> AIDatas;  
 	
 protected:
@@ -37,13 +37,15 @@ protected:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-	void CalculateAttackCost(const FTileData& TileData,  const AActor* Enemy, const TArray<AActor*>& PUnitsAttacked, FTileInfo& OutInfo, float& OutAttackCost);
+	void CalculateAttackCost(const FTileData& TileData, AActor* Enemy, const TArray<AActor*>& PUnitsAttacked, FTileInfo& OutInfo, float& OutAttackCost);
 	
 	
 
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	
+	UFUNCTION(BlueprintCallable, Category = "AIManager")
 	void StartLogic(const TArray<AActor*>& Enemies);
 		
 };

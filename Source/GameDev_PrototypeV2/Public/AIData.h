@@ -23,7 +23,10 @@ struct FAIData
 		
 	}
 	
+	UPROPERTY(Editanywhere, BlueprintReadWrite, Category="AIData")
 	EActionType ActionType;
+	UPROPERTY(Editanywhere, BlueprintReadWrite, Category="AIData")
 	FIntPoint TileToReach;
+	UPROPERTY(Editanywhere, BlueprintReadWrite, Category="AIData")
 	AActor* ActorToAttack;
 };

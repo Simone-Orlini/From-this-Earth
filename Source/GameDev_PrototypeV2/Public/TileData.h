@@ -71,7 +71,7 @@ struct FTileData
 	TArray<ETileStatus> TileStatuses;
 	
 	UPROPERTY(Editanywhere, BlueprintReadWrite)
-	UStaticMeshComponent* Outline;
+	UStaticMesh* Outline;
 
 	UPROPERTY(Editanywhere, BlueprintReadWrite)
 	class UNiagaraComponent* VFX;
