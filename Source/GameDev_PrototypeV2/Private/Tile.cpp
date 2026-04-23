@@ -69,15 +69,15 @@ void ATile::UnitEnterTile(AActor* Actor)
 	}
 }
 
-void ATile::SpawnTile(const FTileData& _tileData)
+void ATile::SpawnTile(FTileData _tileData)
 {
 	InitTileData(_tileData);
 
-	outline = tileData.Outline;
+	outline->SetStaticMesh(tileData.Outline->GetStaticMesh());
 	VFX = tileData.VFX;
 }
 
-void ATile::InitTileData(const FTileData& _tileData)
+void ATile::InitTileData(FTileData _tileData)
 {
 	tileData = _tileData;
 }
