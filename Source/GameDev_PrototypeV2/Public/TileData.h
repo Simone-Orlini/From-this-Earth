@@ -71,7 +71,7 @@ struct FTileData
 	TArray<ETileStatus> TileStatuses;
 	
 	UPROPERTY(Editanywhere, BlueprintReadWrite)
-	UStaticMeshComponent* Outline;
+	UStaticMesh* Outline;
 
 	UPROPERTY(Editanywhere, BlueprintReadWrite)
 	class UNiagaraComponent* VFX;
@@ -79,22 +79,22 @@ struct FTileData
 	UPROPERTY(Editanywhere, BlueprintReadWrite)
 	class AItem* Item;
 	
-	int32 AICost() const
+	int32 GetAICost() const
 	{
 		switch (GridTileData.TileType)
 		{
 			// Valori monentanei da tunare
 			default:
 			case ETileType::Empty:
-				return 0;
+				return 5;
 			case ETileType::ToReach:
-				return -999999; // The AI cant reach the tile ToReach
+				return 0; // The AI cant reach the tile ToReach
 			case ETileType::Bush:
-				return 2;
+				return 7;
 			case ETileType::Mud:
-				return -2;
+				return 3;
 			case ETileType::Fire:
-				return -5;
+				return 1;
 		}
 	}
 	

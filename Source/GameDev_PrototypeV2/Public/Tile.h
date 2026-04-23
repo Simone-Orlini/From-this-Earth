@@ -20,20 +20,20 @@ public:
 	FTileData tileData;	
 	
 private:
-	UPROPERTY(EditAnywhere, Category="Grid|Tile")
-	FVector spawnLocEnvGraphicElement = FVector(0,0,0);
-	
-	UPROPERTY(EditAnywhere, Category="Grid|Tile")
-	UStaticMeshComponent* outline;
-	
-	UPROPERTY(EditAnywhere, Category="Grid|Tile")
-	class UNiagaraComponent* VFX;
 	
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Grid|Tile")
+	FVector spawnLocEnvGraphicElement = FVector(0,0,0);
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Grid|Tile")
+	UStaticMeshComponent* outline;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Grid|Tile")
+	class UNiagaraComponent* VFX;
 	
 
 public:	
@@ -47,10 +47,10 @@ public:
 	void UnitEnterTile(AActor* Actor);
 	
 	UFUNCTION(BlueprintCallable,  Category="Grid|Tile")
-	void SpawnTile(const FTileData& _tileData);
+	void SpawnTile(FTileData _tileData);
 	
 	UFUNCTION(BlueprintCallable)
-	void InitTileData(const FTileData& _tileData);
+	void InitTileData(FTileData _tileData);
 	
 	UFUNCTION(BlueprintCallable)
 	void UpdateOutline();
