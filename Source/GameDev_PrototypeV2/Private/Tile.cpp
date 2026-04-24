@@ -11,12 +11,16 @@ ATile::ATile()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	outline = CreateDefaultSubobject<UStaticMeshComponent>("Outline");
-	RootComponent = outline;	
+	outline = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Outline"));
+	RootComponent = outline;
 
-	VFX = CreateDefaultSubobject<UNiagaraComponent>("VFX");
+	VFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("VFX"));
 	VFX->SetupAttachment(RootComponent);
 	VFX->bAutoActivate = false;
+
+	VisualElementMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("VisualElementMeshComp"));
+	VisualElementMeshComp->SetupAttachment(RootComponent);
+	VisualElementMeshComp->SetVisibility(false);
 }
 
 // Called when the game starts or when spawned
@@ -70,13 +74,34 @@ void ATile::UnitEnterTile(AActor* Actor)
 	}
 }
 
-void ATile::SpawnTile(FTileData _tileData)
+void ATile::SpawnTile(FTileData _tileData, TArray<UStaticMesh*> meshes)
 {
 	InitTileData(_tileData);
+	InitVisualElement(meshes);
+
 
 	outline->SetStaticMesh(tileData.Outline);
 	VFX->SetAsset(tileData.VFX);
 	VFX->SetActive(false);
+
+	switch (tileData.GridTileData.TileType)
+	{
+	default:
+	case ETileType::Empty:
+		break;
+	case ETileType::ToReach:
+		VFX->SetActive(true);
+		break;
+	case ETileType::Bush:
+		SpawnVisualElement(EMaskType::Grass);
+		break;
+	case ETileType::Mud:
+		SpawnVisualElement(EMaskType::Mud);
+		break;
+	case ETileType::Fire:
+		SpawnVisualElement(EMaskType::Fire);
+		break;
+	};
 }
 
 void ATile::InitTileData(FTileData _tileData)
@@ -145,4 +170,22 @@ void ATile::RemoveOutlineStatus(ETileStatus oldStatus)
 void ATile::EnableVFX()
 {
 	VFX->SetActive(true);
+}
+
+void ATile::InitVisualElement(TArray<UStaticMesh*> meshes)
+{
+	int32 index = 0;
+	for (int32 i = 0; i < meshes.Num(); i++)
+	{
+		VisualTileTypeElements.Add(static_cast<EMaskType>(i+1), meshes[i]);
+	}
+}
+
+void ATile::SpawnVisualElement(EMaskType MaskType)
+{
+	if (VisualTileTypeElements.Find(MaskType))
+	{
+		VisualElementMeshComp->SetStaticMesh(*VisualTileTypeElements.Find(MaskType));
+		VisualElementMeshComp->SetVisibility(true);
+	}
 }

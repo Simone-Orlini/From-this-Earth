@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "TileData.h"
+#include "GamemodeData.h"
 #include "GameFramework/Actor.h"
 #include "Tile.generated.h"
 
@@ -29,7 +30,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Grid|Tile")
 	FVector spawnLocEnvGraphicElement = FVector(0,0,0);
 	
-	//Map<maskType, ElementToSpawn> 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Grid|Tile|Visual")
+	UStaticMeshComponent* VisualElementMeshComp;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Grid|Tile|Visual")
+	TMap<EMaskType, UStaticMesh*> VisualTileTypeElements; // Da cambiare con il tipo generico
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Grid|Tile")
 	UStaticMeshComponent* outline;
@@ -49,7 +54,7 @@ public:
 	void UnitEnterTile(AActor* Actor);
 	
 	UFUNCTION(BlueprintCallable,  Category="Grid|Tile")
-	void SpawnTile(FTileData _tileData);
+	void SpawnTile(FTileData _tileData, TArray<UStaticMesh*> meshes);
 	
 	UFUNCTION(BlueprintCallable, Category="Grid|Tile")
 	void InitTileData(FTileData _tileData);
@@ -65,4 +70,10 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category="Grid|Tile|Visual")
 	void EnableVFX();
+	
+	UFUNCTION(BlueprintCallable, Category="Grid|Tile")
+	void InitVisualElement(TArray<UStaticMesh*> meshes);
+	
+	UFUNCTION(BlueprintCallable, Category="Grid|Tile|Visual")
+	void SpawnVisualElement(EMaskType MaskType);
 };
