@@ -16,7 +16,7 @@ public:
 	// Sets default values for this actor's properties
 	ATile();
 	
-	UPROPERTY(BlueprintReadOnly, Category="Grid|Tile")
+	UPROPERTY(BlueprintReadWrite, Category="Grid|Tile")
 	FTileData tileData;	
 	
 private:

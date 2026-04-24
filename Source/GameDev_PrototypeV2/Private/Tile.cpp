@@ -55,16 +55,16 @@ void ATile::UnitEnterTile(AActor* Actor)
 	 * In caso di alleta si deve dire al gamemode se la unit ha raccolto un item
 	 * L'unita deve avere delle informazioni del tile
 	 */
-	
-	
+
+
 	// if (Actor == Ally)
-		
+
 	// The unit reached the ToReachTile
 	if (tileData.GridTileData.TileType == ETileType::ToReach)
 	{
 		VFX->SetVisibility(false);
 		tileData.GridTileData.TileType = ETileType::Empty;
-		
+
 		// Notify to the maskManager
 	}
 }
@@ -90,6 +90,8 @@ void ATile::UpdateOutline()
 	});
 
 	ETileStatus s = tileData.TileStatuses[0];
+
+	// UE_LOG(LogTemp, Warning, TEXT("Enum:" + s));
 	if (s == ETileStatus::None)
 	{
 		outline->SetVisibility(false);
@@ -106,15 +108,19 @@ void ATile::UpdateOutline()
 	case ETileStatus::Highlight:
 		colorBorder = FLinearColor(0.5f, 0.5f, 0.5f);
 		colorFill = colorBorder;
+		break;
 	case ETileStatus::Hovered:
 		colorBorder = FLinearColor(0.2f, 0.35f, 0.0f);
 		colorFill = colorBorder;
+		break;
 	case ETileStatus::Movement:
 		colorBorder = FLinearColor(0.15f, 0.45f, 0.0f);
 		colorFill = colorBorder;
+		break;
 	case ETileStatus::Attack:
 		colorBorder = FLinearColor(0.9f, 0.3f, 0.0f);
 		colorFill = colorBorder;
+		break;
 	default:
 	case ETileStatus::None:
 		break;
