@@ -10,12 +10,13 @@ ATile::ATile()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+
 	outline = CreateDefaultSubobject<UStaticMeshComponent>("Outline");
-	outline->SetupAttachment(RootComponent);
+	RootComponent = outline;	
 
 	VFX = CreateDefaultSubobject<UNiagaraComponent>("VFX");
 	VFX->SetupAttachment(RootComponent);
-	VFX->SetVisibility(false);
+	VFX->bAutoActivate = false;
 }
 
 // Called when the game starts or when spawned
@@ -54,6 +55,8 @@ void ATile::UnitEnterTile(AActor* Actor)
 	/* Quando una unit entra nel tile va prima definito se e' alleata o nemica
 	 * In caso di alleta si deve dire al gamemode se la unit ha raccolto un item
 	 * L'unita deve avere delle informazioni del tile
+	 * 
+	 * 
 	 */
 
 
@@ -62,10 +65,8 @@ void ATile::UnitEnterTile(AActor* Actor)
 	// The unit reached the ToReachTile
 	if (tileData.GridTileData.TileType == ETileType::ToReach)
 	{
-		VFX->SetVisibility(false);
+		VFX->SetActive(false);
 		tileData.GridTileData.TileType = ETileType::Empty;
-
-		// Notify to the maskManager
 	}
 }
 
@@ -74,7 +75,8 @@ void ATile::SpawnTile(FTileData _tileData)
 	InitTileData(_tileData);
 
 	outline->SetStaticMesh(tileData.Outline);
-	VFX = tileData.VFX;
+	VFX->SetAsset(tileData.VFX);
+	VFX->SetActive(false);
 }
 
 void ATile::InitTileData(FTileData _tileData)
@@ -138,4 +140,9 @@ void ATile::AddOutlineStatus(ETileStatus newStatus)
 void ATile::RemoveOutlineStatus(ETileStatus oldStatus)
 {
 	tileData.TileStatuses.Remove(oldStatus);
+}
+
+void ATile::EnableVFX()
+{
+	VFX->SetActive(true);
 }

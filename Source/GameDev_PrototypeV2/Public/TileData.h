@@ -74,7 +74,7 @@ struct FTileData
 	UStaticMesh* Outline;
 
 	UPROPERTY(Editanywhere, BlueprintReadWrite)
-	class UNiagaraComponent* VFX;
+	class UNiagaraSystem* VFX;
 	
 	UPROPERTY(Editanywhere, BlueprintReadWrite)
 	class AItem* Item;

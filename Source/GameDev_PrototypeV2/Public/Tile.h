@@ -29,6 +29,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Grid|Tile")
 	FVector spawnLocEnvGraphicElement = FVector(0,0,0);
 	
+	//Map<maskType, ElementToSpawn> 
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Grid|Tile")
 	UStaticMeshComponent* outline;
 	
@@ -49,15 +51,18 @@ public:
 	UFUNCTION(BlueprintCallable,  Category="Grid|Tile")
 	void SpawnTile(FTileData _tileData);
 	
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category="Grid|Tile")
 	void InitTileData(FTileData _tileData);
 	
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category="Grid|Tile|Visual")
 	void UpdateOutline();
 	
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category="Grid|Tile|Visual")
 	void AddOutlineStatus(ETileStatus newStatus);
 	
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category="Grid|Tile|Visual")
 	void RemoveOutlineStatus(ETileStatus oldStatus);
+	
+	UFUNCTION(BlueprintCallable, Category="Grid|Tile|Visual")
+	void EnableVFX();
 };

@@ -20,7 +20,9 @@ public:
 	UAIManager();
 	
 	UPROPERTY(BlueprintReadWrite, Category="AIManager")
-	TMap<AActor*, FAIData> AIDatas;  
+	TMap<AActor*, FAIData> AIDatas; 
+	
+	
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="AIManager|Weight")
