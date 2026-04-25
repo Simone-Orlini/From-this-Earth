@@ -150,6 +150,7 @@ void ATile::UpdateOutline()
 		break;
 	default:
 	case ETileStatus::None:
+		// outline->CreateAndSetMaterialInstanceDynamic(0)->SetVectorParameterValue(FName("Color_Border"), colorBorder);
 		break;
 	}
 
