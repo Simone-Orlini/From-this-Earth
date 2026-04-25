@@ -26,15 +26,15 @@ public:
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="AIManager|Weight")
-	float unitDistWeight;
+	float unitDistWeight = 1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="AIManager|Weight")
-	float damageWeight;
+	float damageWeight = 1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="AIManager|Weight")
-	float tileWeight;
+	float tileWeight = 1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="AIManager|Weight")
-	float distWeight;
+	float distWeight = 1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="AIManager|Weight")
-	float attackWeight;
+	float attackWeight = 1.0f;
 
 protected:
 	// Called when the game starts
@@ -44,9 +44,6 @@ protected:
 	
 
 public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	
 	UFUNCTION(BlueprintCallable, Category = "AIManager")
 	void StartLogic(const TArray<AActor*>& Enemies);
 		
