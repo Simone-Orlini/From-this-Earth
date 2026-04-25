@@ -73,7 +73,7 @@ void UAIManager::StartLogic(const TArray<AActor*>& Enemies)
 
 			if (!bCanAttackWithoutMove)
 			{
-				//CalculateAttackCost(cTile, cEnemy, pUnitsAttacked, info, attackCost);
+				CalculateAttackCost(cTile, cEnemy, pUnitsAttacked, info, attackCost);
 
 				if (i == 0 && attackCost > 0.0f)
 				{
@@ -88,7 +88,7 @@ void UAIManager::StartLogic(const TArray<AActor*>& Enemies)
 			info.FinalCost = finalCost;
 			tilesInfo.Add(cTile.GridTileData.Index, info);
 
-			//i++;
+			i++;
 		}
 
 		TArray<FIntPoint> bestTiles;
@@ -194,9 +194,9 @@ void UAIManager::CalculateAttackCost(const FTileData& TileData, AActor* Enemy, c
 			continue;
 		}
 
-		float unitDistConst = IGamemodeAImanger::Execute_GetPointsFromPath(GameMode, cUnit, TileData).Num(); //GridManager.Path(TileData, cUnit);
+		float unitDistCost = IGamemodeAImanger::Execute_GetPointsFromPath(GameMode, cUnit, TileData).Num() / 3.0f; // Magic number da sostiture con il maxAttackRange
 		// float damageCost = 1 - 0.0f; //(FMath::Max(0, cUnit->GetComponentByClass(CombatComponent).currentHealth - Enemy.GetComponentByClass(WeaponCompoennt).damage))
-		float tempAttackCost = unitDistConst * unitDistWeight;
+		float tempAttackCost = unitDistCost * unitDistWeight;
 		// damageCost * damageWeight;
 
 		if (tempAttackCost > OutAttackCost)
