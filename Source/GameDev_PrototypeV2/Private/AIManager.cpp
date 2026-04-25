@@ -65,7 +65,7 @@ void UAIManager::StartLogic(const TArray<AActor*>& Enemies)
 
 
 			float tileCost = cTile.GetAICost() / 7.0f; // 7 is the maxCost - MAGICNUMBER BLEH
-			float distCost = 0.2f; //AGameModeBase.Path(cEnemy, cTile);
+			float distCost = IGamemodeAImanger::Execute_GetPointsFromPath(GameMode, cEnemy, cTile).Num() / 5.0f; // 5 should be the current moverange from the cEnemy; //AGameModeBase.Path(cEnemy, cTile);
 			if (distCost < 0.001f || i == 0)
 				distCost = 1.5f;
 

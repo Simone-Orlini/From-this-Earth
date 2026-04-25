@@ -102,6 +102,8 @@ void ATile::SpawnTile(FTileData _tileData, TArray<UStaticMesh*> meshes)
 		SpawnVisualElement(EMaskType::Fire);
 		break;
 	};
+	
+	UpdateOutline();
 }
 
 void ATile::InitTileData(FTileData _tileData)
@@ -119,22 +121,25 @@ void ATile::UpdateOutline()
 	ETileStatus s = tileData.TileStatuses[0];
 
 	// UE_LOG(LogTemp, Warning, TEXT("Enum:" + s));
-	if (s == ETileStatus::None)
-	{
-		outline->SetVisibility(false);
-		return;
-	}
+	// if (s == ETileStatus::None)
+	// {
+	// 	outline->SetVisibility(false);
+	// 	return;
+	// }
 
 	outline->SetVisibility(true);
 
 	FLinearColor colorBorder = FLinearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	FLinearColor colorFill = FLinearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	outline->CreateAndSetMaterialInstanceDynamic(0)->SetScalarParameterValue(FName("Fill"), 1.0f);
 
 	switch (s)
 	{
 	case ETileStatus::Highlight:
 		colorBorder = FLinearColor(0.5f, 0.5f, 0.5f);
 		colorFill = colorBorder;
+		outline->CreateAndSetMaterialInstanceDynamic(0)->SetScalarParameterValue(FName("Fill"), 0.5f);
+		
 		break;
 	case ETileStatus::Hovered:
 		colorBorder = FLinearColor(0.2f, 0.35f, 0.0f);
@@ -150,7 +155,7 @@ void ATile::UpdateOutline()
 		break;
 	default:
 	case ETileStatus::None:
-		// outline->CreateAndSetMaterialInstanceDynamic(0)->SetVectorParameterValue(FName("Color_Border"), colorBorder);
+		outline->CreateAndSetMaterialInstanceDynamic(0)->SetScalarParameterValue(FName("Fill"), 0.0f);
 		break;
 	}
 
