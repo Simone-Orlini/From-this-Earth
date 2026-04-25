@@ -57,23 +57,22 @@ void UAIManager::StartLogic(const TArray<AActor*>& Enemies)
 
 		for (FTileData& cTile : tiles)
 		{
-			FTileInfo info;
-
 			if (i != 0 && (!cTile.bIsWalkable || cTile.IsOccupied() || tileOccupated.Contains(cTile.GridTileData.Index)))
 				continue;
-
+			
+			FTileInfo info;
 
 
 			float tileCost = cTile.GetAICost() / 7.0f; // 7 is the maxCost - MAGICNUMBER BLEH
 			float distCost = IGamemodeAImanger::Execute_GetPointsFromPath(GameMode, cEnemy, cTile).Num() / 5.0f; // 5 should be the current moverange from the cEnemy; //AGameModeBase.Path(cEnemy, cTile);
 			if (distCost < 0.001f || i == 0)
-				distCost = 1.5f;
+				distCost = 0.0f;
 
 			float attackCost = 0.0f;
 
 			if (!bCanAttackWithoutMove)
 			{
-				CalculateAttackCost(cTile, cEnemy, pUnitsAttacked, info, attackCost);
+				//CalculateAttackCost(cTile, cEnemy, pUnitsAttacked, info, attackCost);
 
 				if (i == 0 && attackCost > 0.0f)
 				{
@@ -131,6 +130,7 @@ void UAIManager::StartLogic(const TArray<AActor*>& Enemies)
 
 					data.ActionType = EActionType::AttackToMove;
 					data.TileToReach = rBestTile;
+					tileOccupated.Add(rBestTile);
 				}
 				else
 				{
@@ -150,6 +150,7 @@ void UAIManager::StartLogic(const TArray<AActor*>& Enemies)
 
 					data.ActionType = EActionType::Move;
 					data.TileToReach = rBestTile;
+					tileOccupated.Add(rBestTile);
 				}
 				else
 				{
@@ -165,12 +166,14 @@ void UAIManager::StartLogic(const TArray<AActor*>& Enemies)
 				data.ActionType = EActionType::MoveToAttack;
 				data.TileToReach = rBestTile;
 				data.ActorToAttack = unitToAttack;
+				tileOccupated.Add(rBestTile);
 			}
 			else
 			{
 				data.ActionType = EActionType::Move;
 				data.TileToReach = rBestTile;
 				data.ActorToAttack = nullptr;
+				tileOccupated.Add(rBestTile);
 			}
 
 		}

@@ -102,7 +102,7 @@ void ATile::SpawnTile(FTileData _tileData, TArray<UStaticMesh*> meshes)
 		SpawnVisualElement(EMaskType::Fire);
 		break;
 	};
-	
+
 	UpdateOutline();
 }
 
@@ -127,7 +127,7 @@ void ATile::UpdateOutline()
 	// 	return;
 	// }
 
-	outline->SetVisibility(true);
+	//outline->SetVisibility(true);
 
 	FLinearColor colorBorder = FLinearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	FLinearColor colorFill = FLinearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -139,7 +139,7 @@ void ATile::UpdateOutline()
 		colorBorder = FLinearColor(0.5f, 0.5f, 0.5f);
 		colorFill = colorBorder;
 		outline->CreateAndSetMaterialInstanceDynamic(0)->SetScalarParameterValue(FName("Fill"), 0.5f);
-		
+
 		break;
 	case ETileStatus::Hovered:
 		colorBorder = FLinearColor(0.2f, 0.35f, 0.0f);
@@ -183,7 +183,7 @@ void ATile::InitVisualElement(TArray<UStaticMesh*> meshes)
 	int32 index = 0;
 	for (int32 i = 0; i < meshes.Num(); i++)
 	{
-		VisualTileTypeElements.Add(static_cast<EMaskType>(i+1), meshes[i]);
+		VisualTileTypeElements.Add(static_cast<EMaskType>(i + 1), meshes[i]);
 	}
 }
 
@@ -193,5 +193,22 @@ void ATile::SpawnVisualElement(EMaskType MaskType)
 	{
 		VisualElementMeshComp->SetStaticMesh(*VisualTileTypeElements.Find(MaskType));
 		VisualElementMeshComp->SetVisibility(true);
+
+		switch (MaskType)
+		{
+		default:
+		case EMaskType::NONE:
+			// Non esiste la maschera
+			break;
+		case EMaskType::Grass:
+			tileData.GridTileData.TileType = ETileType::Bush;
+			break;
+		case EMaskType::Mud:
+			tileData.GridTileData.TileType = ETileType::Mud;
+			break;
+		case EMaskType::Fire:
+			tileData.GridTileData.TileType = ETileType::Fire;
+			break;
+		}
 	}
 }
