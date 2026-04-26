@@ -21,6 +21,7 @@ ATile::ATile()
 	VisualElementMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("VisualElementMeshComp"));
 	VisualElementMeshComp->SetupAttachment(RootComponent);
 	VisualElementMeshComp->SetVisibility(false);
+	VisualElementMeshComp->SetRelativeScale3D(FVector(4.0f));
 }
 
 // Called when the game starts or when spawned
