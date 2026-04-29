@@ -8,6 +8,8 @@
 #include "GameFramework/Actor.h"
 #include "Tile.generated.h"
 
+class UNiagaraComponent;
+
 UCLASS()
 class GAMEDEV_PROTOTYPEV2_API ATile : public AActor
 {
@@ -32,15 +34,17 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Grid|Tile|Visual")
 	UStaticMeshComponent* VisualElementMeshComp;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Grid|Tile|Visual")
+	UNiagaraComponent* VisualElementVFXComp;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Grid|Tile|Visual")
-	TMap<EMaskType, UStaticMesh*> VisualTileTypeElements; // Da cambiare con il tipo generico
+	TMap<EMaskType, UObject*> VisualTileTypeElements; // Da cambiare con il tipo generico
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Grid|Tile")
 	UStaticMeshComponent* outline;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Grid|Tile")
-	class UNiagaraComponent* VFX;
+	UNiagaraComponent* VFX;
 	
 
 public:	
@@ -54,7 +58,7 @@ public:
 	void UnitEnterTile(AActor* Actor);
 	
 	UFUNCTION(BlueprintCallable,  Category="Grid|Tile")
-	void SpawnTile(FTileData _tileData, TArray<UStaticMesh*> meshes);
+	void SpawnTile(FTileData _tileData, TArray<UObject*> elements);
 	
 	UFUNCTION(BlueprintCallable, Category="Grid|Tile")
 	void InitTileData(FTileData _tileData);
@@ -72,7 +76,7 @@ public:
 	void EnableVFX();
 	
 	UFUNCTION(BlueprintCallable, Category="Grid|Tile")
-	void InitVisualElement(TArray<UStaticMesh*> meshes);
+	void InitVisualElement(TArray<UObject*> elements);
 	
 	UFUNCTION(BlueprintCallable, Category="Grid|Tile|Visual")
 	void SpawnVisualElement(EMaskType MaskType);
