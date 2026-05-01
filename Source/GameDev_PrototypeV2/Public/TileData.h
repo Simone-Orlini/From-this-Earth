@@ -78,6 +78,8 @@ struct FTileData
 	
 	UPROPERTY(Editanywhere, BlueprintReadWrite)
 	class AItem* Item;
+
+	static const int32 MaxAICost = 7;
 	
 	int32 GetAICost() const
 	{

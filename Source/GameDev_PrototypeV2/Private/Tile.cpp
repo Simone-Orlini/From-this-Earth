@@ -4,6 +4,8 @@
 #include "NiagaraComponent.h"
 #include  "NiagaraSystem.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/TextRenderComponent.h"
+#include "Components/TextRenderComponent.h"
 
 
 // Sets default values
@@ -27,6 +29,11 @@ ATile::ATile()
 	VisualElementVFXComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("VisualElementVFXComp"));
 	VisualElementVFXComp->SetupAttachment(RootComponent);
 	VisualElementVFXComp->SetVisibility(false);
+	
+	coordsText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Coords"));
+	coordsText->SetupAttachment(RootComponent);
+	coordsText->SetRelativeLocation(FVector(0.0f, 50.0f, 0.0f));
+	coordsText->SetRelativeRotation(FRotator(90.0f, 0, 0.0f));
 }
 
 // Called when the game starts or when spawned
@@ -84,7 +91,8 @@ void ATile::SpawnTile(FTileData _tileData, TArray<UObject*> elements)
 {
 	InitTileData(_tileData);
 	InitVisualElement(elements);
-
+	
+	coordsText->SetText(FText::FromString(FString::Printf(TEXT("X: %d, Y: %d"), tileData.GridTileData.Index.X, tileData.GridTileData.Index.Y)));
 
 	outline->SetStaticMesh(tileData.Outline);
 	VFX->SetAsset(tileData.VFX);
