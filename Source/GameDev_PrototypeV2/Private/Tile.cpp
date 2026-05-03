@@ -2,6 +2,7 @@
 
 #include "Tile.h"
 #include "NiagaraComponent.h"
+#include  "NiagaraSystem.h"
 #include "Components/StaticMeshComponent.h"
 
 
@@ -21,7 +22,11 @@ ATile::ATile()
 	VisualElementMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("VisualElementMeshComp"));
 	VisualElementMeshComp->SetupAttachment(RootComponent);
 	VisualElementMeshComp->SetVisibility(false);
-	VisualElementMeshComp->SetRelativeScale3D(FVector(4.0f));
+	VisualElementMeshComp->SetRelativeScale3D(FVector(4.0f)); // DA ELIMINARE
+	
+	VisualElementVFXComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("VisualElementVFXComp"));
+	VisualElementVFXComp->SetupAttachment(RootComponent);
+	VisualElementVFXComp->SetVisibility(false);
 }
 
 // Called when the game starts or when spawned
@@ -75,10 +80,10 @@ void ATile::UnitEnterTile(AActor* Actor)
 	}
 }
 
-void ATile::SpawnTile(FTileData _tileData, TArray<UStaticMesh*> meshes)
+void ATile::SpawnTile(FTileData _tileData, TArray<UObject*> elements)
 {
 	InitTileData(_tileData);
-	InitVisualElement(meshes);
+	InitVisualElement(elements);
 
 
 	outline->SetStaticMesh(tileData.Outline);
@@ -179,12 +184,12 @@ void ATile::EnableVFX()
 	VFX->SetActive(true);
 }
 
-void ATile::InitVisualElement(TArray<UStaticMesh*> meshes)
+void ATile::InitVisualElement(TArray<UObject*> elements)
 {
 	int32 index = 0;
-	for (int32 i = 0; i < meshes.Num(); i++)
+	for (int32 i = 0; i < elements.Num(); i++)
 	{
-		VisualTileTypeElements.Add(static_cast<EMaskType>(i + 1), meshes[i]);
+		VisualTileTypeElements.Add(static_cast<EMaskType>(i + 1), elements[i]);
 	}
 }
 
@@ -192,8 +197,35 @@ void ATile::SpawnVisualElement(EMaskType MaskType)
 {
 	if (VisualTileTypeElements.Find(MaskType))
 	{
-		VisualElementMeshComp->SetStaticMesh(*VisualTileTypeElements.Find(MaskType));
-		VisualElementMeshComp->SetVisibility(true);
+		UObject** obj = VisualTileTypeElements.Find(MaskType);
+		
+		if (!*obj || !obj)
+			return;
+		
+		
+		
+		UStaticMesh* mesh = Cast<UStaticMesh>(*obj);
+		if (mesh)
+		{
+			VisualElementMeshComp->SetStaticMesh(mesh);
+			VisualElementMeshComp->SetVisibility(true);
+		}
+		else 
+		{
+			UNiagaraSystem* niagara = Cast<UNiagaraSystem>(*obj);
+			
+			if (niagara)
+			{
+				VisualElementVFXComp->SetAsset(niagara);
+				VisualElementVFXComp->SetVisibility(true);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("the visual element in this mask - %hhd - is not compatible"), MaskType)
+			}
+		}
+		
+		
 
 		switch (MaskType)
 		{
