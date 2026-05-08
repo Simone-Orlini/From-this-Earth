@@ -238,6 +238,7 @@ void UAIManager::CalculateAttackCost(const FTileData& TileData, AActor* Enemy, T
 
 int32 UAIManager::FindShorterPath(const TArray<AActor*> Allies, const FTileData& Tiledata, AActor* Enemy)
 {
+	// Prendere il path da me a al player e prendere il primo tile che posso raggiungere (gia' fatto in precendenza )
 	AGameModeBase* GameMode = UGameplayStatics::GetGameMode(GetWorld());
 	int32 nearestPath = MAX_int32;
 	int32 numToReturn = 19; // MaxPathInMap
