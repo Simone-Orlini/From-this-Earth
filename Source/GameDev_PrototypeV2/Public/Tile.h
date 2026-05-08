@@ -46,6 +46,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Grid|Tile")
 	UNiagaraComponent* VFX;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Grid|Tile|Debug")
+	class UTextRenderComponent* coordsText;
+	
 
 public:	
 	// Called every frame
