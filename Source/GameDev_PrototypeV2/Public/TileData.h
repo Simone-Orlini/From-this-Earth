@@ -101,6 +101,11 @@ struct FTileData
 	}
 	
 	bool IsOccupied() const {return Actor != nullptr;}
+	
+	bool operator==(const FTileData& Other) const
+	{
+		return GridTileData.Index == Other.GridTileData.Index; 
+	}
 };
 
 
