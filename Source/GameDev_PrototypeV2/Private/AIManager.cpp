@@ -12,6 +12,7 @@ struct FTileInfo
 	FTileInfo() : ActorToAttack(nullptr), FinalCost(-1.0f)
 	{
 	}
+
 	float FinalCost;
 	float distFromUnitCost;
 	float tileCost;
@@ -45,8 +46,8 @@ void UAIManager::StartLogic(const TArray<AActor*>& Enemies, const TArray<AActor*
 {
 	AGameModeBase* GameMode = UGameplayStatics::GetGameMode(GetWorld());
 
-	TArray<FIntPoint> tileOccupated;
-	TArray<AActor*> pUnitsAttacked;
+	tileOccupated.Empty();
+	pUnitsAttacked.Empty();
 
 	for (AActor* cEnemy : Enemies)
 	{
@@ -56,18 +57,20 @@ void UAIManager::StartLogic(const TArray<AActor*>& Enemies, const TArray<AActor*
 
 		TMap<FIntPoint, FTileInfo> tilesInfo;
 		bool bCanAttackWithoutMove = false;
+		bool bCanAttack = false;
 		int32 i = 0;
 
 		for (FTileData& cTile : tiles)
 		{
-			if (i != 0 && (!cTile.bIsWalkable || cTile.IsOccupied() || tileOccupated.
-				Contains(cTile.GridTileData.Index)))
+			if (i != 0 && (!cTile.bIsWalkable || cTile.IsOccupied() || 
+				tileOccupated.Contains(cTile.GridTileData.Index)))
 				continue;
 
 			FTileInfo info;
 
 
-			float tileCost = cTile.GetAICost() / static_cast<float>(FTileData::MaxAICost); // 7 is the maxCost - MAGICNUMBER BLEH
+			float tileCost = cTile.GetAICost() / static_cast<float>(FTileData::MaxAICost);
+			// 7 is the maxCost - MAGICNUMBER BLEH
 			float distCost = IGamemodeAImanger::Execute_GetPointsFromPath(GameMode, cEnemy, cTile).Num() / 4.0f;
 			// 4 is the currentMovementRange - MAGICNUMBER BLEH
 			// 5 should be the current moverange from the cEnemy; //AGameModeBase.Path(cEnemy, cTile);
@@ -79,19 +82,14 @@ void UAIManager::StartLogic(const TArray<AActor*>& Enemies, const TArray<AActor*
 
 			if (!bCanAttackWithoutMove)
 			{
-				CalculateAttackCost(cTile, cEnemy, pUnitsAttacked, info, attackCost);
+				CalculateAttackCost(cTile, cEnemy, info, attackCost);
+				if (attackCost > 0.0f)
+				{
+					bCanAttack = true;
+				}
 
 				if (i == 0 && attackCost > 0.0f)
 					bCanAttackWithoutMove = true;
-				else if (attackCost <= 0.0f)
-				{
-					// Problema e' che da qui non posso attaccare ma potenzialmente se mi sposto posso, ma essendo questo attack cost meglio rispetto ad uno calcolato da un tile che posso attaccare non funziona
-					int32 pathNumTile = FindShorterPath(Allies, cTile, cEnemy);
-					distFromUnitCost = 1.0f - (pathNumTile / 19.0f); // MAGIC NUMBER da sostituire con il max range * 2
-					/* do the pathfinding to every players unit and see witch is with the lowest pathfinding
-					 * take that and divide it to the max grid size and then 1-
-					 */
-				}
 			}
 
 			info.tileCost = tileCost;
@@ -108,6 +106,16 @@ void UAIManager::StartLogic(const TArray<AActor*>& Enemies, const TArray<AActor*
 			tilesInfo.Add(cTile.GridTileData.Index, info);
 
 			i++;
+		}
+
+		if (!bCanAttack)
+		{
+			FIntPoint point = FindShorterPath(Allies, cEnemy);
+			FTileInfo* info = tilesInfo.Find(point);
+			if (info)
+			{
+				info->FinalCost += 1.0f;
+			}
 		}
 
 		TArray<FIntPoint> bestTiles;
@@ -201,8 +209,7 @@ void UAIManager::StartLogic(const TArray<AActor*>& Enemies, const TArray<AActor*
 	}
 }
 
-void UAIManager::CalculateAttackCost(const FTileData& TileData, AActor* Enemy, TArray<AActor*>& PUnitsAttacked,
-                                     FTileInfo& OutInfo, float& OutAttackCost)
+void UAIManager::CalculateAttackCost(const FTileData& TileData, AActor* Enemy, FTileInfo& OutInfo, float& OutAttackCost)
 {
 	AGameModeBase* GameMode = UGameplayStatics::GetGameMode(GetWorld());
 
@@ -213,7 +220,7 @@ void UAIManager::CalculateAttackCost(const FTileData& TileData, AActor* Enemy, T
 	{
 		for (AActor* cUnit : unitsAttackable)
 		{
-			if (PUnitsAttacked.Contains(cUnit))
+			if (pUnitsAttacked.Contains(cUnit))
 			{
 				OutInfo.ActorToAttack = nullptr;
 				continue;
@@ -232,33 +239,46 @@ void UAIManager::CalculateAttackCost(const FTileData& TileData, AActor* Enemy, T
 			}
 		}
 
-		// Togliere il const ad PUnitsAttacked
+		pUnitsAttacked.Add(OutInfo.ActorToAttack);
 	}
 }
 
-int32 UAIManager::FindShorterPath(const TArray<AActor*> Allies, const FTileData& Tiledata, AActor* Enemy)
+FIntPoint UAIManager::FindShorterPath(const TArray<AActor*> Allies, AActor* Enemy)
 {
-	// Prendere il path da me a al player e prendere il primo tile che posso raggiungere (gia' fatto in precendenza )
 	AGameModeBase* GameMode = UGameplayStatics::GetGameMode(GetWorld());
 	int32 nearestPath = MAX_int32;
-	int32 numToReturn = 19; // MaxPathInMap
+	AActor* unitClosest = nullptr;
+
+	TArray<FTileData> tilesInRange = IGamemodeAImanger::Execute_GetTilesFromBFS(GameMode, Enemy);
+	FTileData TileData = IGamemodeAImanger::Execute_GetTileData(GameMode, Enemy);
 
 	for (int i = 0; i < Allies.Num(); ++i)
 	{
-		TArray<FIntPoint> path = IGamemodeAImanger::Execute_GetPointsFromPath(GameMode, Allies[i], Tiledata);
-		TArray<FIntPoint> pathFromcTile = IGamemodeAImanger::Execute_GetPointsFromPath(GameMode, Enemy, Tiledata);
-		// array vuota perche' non e' in range
-
-		if (path.Num() < nearestPath && pathFromcTile.Num() >= 4.0) // 4 is the currentMovementRange - MAIGICNUMBER BLEH
+		if (pUnitsAttacked.Contains(Allies[i]))
 		{
+			continue;
+		}
+
+		TArray<FIntPoint> path = IGamemodeAImanger::Execute_GetPointsFromPath(GameMode, Allies[i], TileData);
+		if (path.Num() < nearestPath)
+		{
+			unitClosest = Allies[i];
 			nearestPath = path.Num();
 		}
 	}
 
-	if (nearestPath < MAX_int32)
+	FIntPoint bestPoint = FIntPoint(-1, -1);
+	TArray<FIntPoint> path = IGamemodeAImanger::Execute_GetPointsFromPath(GameMode, unitClosest, TileData);
+	for (FIntPoint p : path)
 	{
-		numToReturn = nearestPath;
+		FTileData d = IGamemodeAImanger::Execute_GetTileDataFromPoint(GameMode, p);
+		if (tilesInRange.Contains(d))
+		{
+			bestPoint = p;
+			pUnitsAttacked.Add(unitClosest);
+			break;
+		}
 	}
 
-	return numToReturn;
+	return bestPoint;
 }

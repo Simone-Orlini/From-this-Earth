@@ -15,6 +15,10 @@ class GAMEDEV_PROTOTYPEV2_API UAIManager : public UActorComponent
 {
 	GENERATED_BODY()
 
+
+	TArray<FIntPoint> tileOccupated;
+	TArray<AActor*> pUnitsAttacked;
+
 public:	
 	// Sets default values for this component's properties
 	UAIManager();
@@ -41,8 +45,8 @@ protected:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-	void CalculateAttackCost(const FTileData& TileData, AActor* Enemy, TArray<AActor*>& PUnitsAttacked, FTileInfo& OutInfo, float& OutAttackCost);
-	int32 FindShorterPath(const TArray<AActor*> Allies, const FTileData& Tiledata, AActor* Enemy);
+	void CalculateAttackCost(const FTileData& TileData, AActor* Enemy, FTileInfo& OutInfo, float& OutAttackCost);
+	FIntPoint FindShorterPath(const TArray<AActor*> Allies, AActor* Enemy);
 	
 	
 
