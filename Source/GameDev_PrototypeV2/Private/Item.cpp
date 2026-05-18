@@ -2,6 +2,8 @@
 
 #include "Item.h"
 
+#include "Math/UnitConversion.h"
+
 // Sets default values
 AItem::AItem()
 {
@@ -36,9 +38,10 @@ void AItem::Spawn(FVector localPos, EItemType type)
 
 void AItem::MoveUpDown(float DeltaTime)
 {
+	float sin = FMath::Sin(GetWorld()->GetTimeSeconds() * speed);
 	FVector loc = FVector(GetActorLocation().X, 
 						  GetActorLocation().Y,
-					  GetActorLocation().Z + FMath::Sin(DeltaTime * speed));
+					  GetActorLocation().Z + sin);
 	SetActorLocation(loc);
 }
 
