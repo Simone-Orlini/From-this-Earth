@@ -15,6 +15,10 @@ class GAMEDEV_PROTOTYPEV2_API UAIManager : public UActorComponent
 {
 	GENERATED_BODY()
 
+
+	TArray<FIntPoint> tileOccupated;
+	TArray<AActor*> pUnitsAttacked;
+
 public:	
 	// Sets default values for this component's properties
 	UAIManager();
@@ -25,9 +29,9 @@ public:
 	
 	
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="AIManager|Weight")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="AIManager|Weight|Attack")
 	float unitDistWeight = 1.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="AIManager|Weight")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="AIManager|Weight|Attack")
 	float damageWeight = 1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="AIManager|Weight")
 	float tileWeight = 1.0f;
@@ -35,16 +39,19 @@ protected:
 	float distWeight = 1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="AIManager|Weight")
 	float attackWeight = 1.0f;
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AIManager|Weight")
+	// float distFromUnitWeight = 1.0f;
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-	void CalculateAttackCost(const FTileData& TileData, AActor* Enemy, const TArray<AActor*>& PUnitsAttacked, FTileInfo& OutInfo, float& OutAttackCost);
+	void CalculateAttackCost(const FTileData& TileData, AActor* Enemy, FTileInfo& OutInfo, float& OutAttackCost);
+	FIntPoint FindShorterPath(const TArray<AActor*> Allies, AActor* Enemy);
 	
 	
 
 public:	
 	UFUNCTION(BlueprintCallable, Category = "AIManager")
-	void StartLogic(const TArray<AActor*>& Enemies);
+	void StartLogic(const TArray<AActor*>& Enemies, const TArray<AActor*>& Allies);
 		
 };
