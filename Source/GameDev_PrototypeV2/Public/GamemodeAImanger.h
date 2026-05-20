@@ -27,8 +27,6 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "GMAI")
 	FTileData GetTileData(AActor* Actor);
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "GMAI")
-	FTileData GetTileDataFromPoint(FIntPoint point);
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "GMAI")
 	TArray<FTileData> GetTilesFromBFS(AActor* Actor);
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "GMAI")
 	TArray<FIntPoint> GetPointsFromPath(AActor* Actor, const FTileData& Tile);
