@@ -78,6 +78,8 @@ struct FTileData
 	
 	UPROPERTY(Editanywhere, BlueprintReadWrite)
 	class AItem* Item;
+
+	static const int32 MaxAICost = 7;
 	
 	int32 GetAICost() const
 	{
@@ -99,6 +101,11 @@ struct FTileData
 	}
 	
 	bool IsOccupied() const {return Actor != nullptr;}
+	
+	bool operator==(const FTileData& Other) const
+	{
+		return GridTileData.Index == Other.GridTileData.Index; 
+	}
 };
 
 
