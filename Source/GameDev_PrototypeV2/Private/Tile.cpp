@@ -93,6 +93,7 @@ void ATile::SpawnTile(FTileData _tileData, TArray<UObject*> elements)
 	InitVisualElement(elements);
 	
 	//coordsText->SetText(FText::FromString(FString::Printf(TEXT("X: %d, Y: %d"), tileData.GridTileData.Index.X, tileData.GridTileData.Index.Y)));
+	coordsText->SetText(FText::FromString(TEXT("")));
 
 	outline->SetStaticMesh(tileData.Outline);
 	VFX->SetAsset(tileData.VFX);
