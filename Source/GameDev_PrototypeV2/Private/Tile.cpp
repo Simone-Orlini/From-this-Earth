@@ -24,7 +24,7 @@ ATile::ATile()
 	VisualElementMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("VisualElementMeshComp"));
 	VisualElementMeshComp->SetupAttachment(RootComponent);
 	VisualElementMeshComp->SetVisibility(false);
-	VisualElementMeshComp->SetRelativeScale3D(FVector(4.0f)); // DA ELIMINARE
+	//VisualElementMeshComp->SetRelativeScale3D(FVector(4.0f)); // DA ELIMINARE
 	
 	VisualElementVFXComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("VisualElementVFXComp"));
 	VisualElementVFXComp->SetupAttachment(RootComponent);
