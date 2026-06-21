@@ -40,8 +40,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Grid|Tile|Visual")
 	TMap<EMaskType, UObject*> VisualTileTypeElements; // Da cambiare con il tipo generico
 	
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Grid|Tile")
+	//UStaticMeshComponent* outline;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Grid|Tile")
-	UStaticMeshComponent* outline;
+    UDecalComponent* outline;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Grid|Tile")
 	UNiagaraComponent* VFX;
