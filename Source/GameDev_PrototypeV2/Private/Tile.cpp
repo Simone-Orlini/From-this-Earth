@@ -12,19 +12,23 @@ ATile::ATile()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+	
+	VisualElementMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("VisualElementMeshComp"));
+	//VisualElementMeshComp->SetupAttachment(RootComponent);
+	VisualElementMeshComp->SetVisibility(false);
+	RootComponent = VisualElementMeshComp;
+
+	//VisualElementMeshComp->SetRelativeScale3D(FVector(4.0f)); // DA ELIMINARE
 
 	outline = CreateDefaultSubobject<UDecalComponent>(TEXT("Outline"));
 	outline->SetRelativeRotation(FRotator(90.f, 0.0f, 0.0f));
-	RootComponent = outline;
+	outline->SetupAttachment(RootComponent);
+	//RootComponent = outline;
 
 	VFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("VFX"));
 	VFX->SetupAttachment(RootComponent);
 	VFX->bAutoActivate = false;
 
-	VisualElementMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("VisualElementMeshComp"));
-	VisualElementMeshComp->SetupAttachment(RootComponent);
-	VisualElementMeshComp->SetVisibility(false);
-	//VisualElementMeshComp->SetRelativeScale3D(FVector(4.0f)); // DA ELIMINARE
 
 	VisualElementVFXComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("VisualElementVFXComp"));
 	VisualElementVFXComp->SetupAttachment(RootComponent);
