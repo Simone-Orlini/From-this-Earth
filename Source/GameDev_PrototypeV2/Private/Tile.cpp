@@ -3,10 +3,9 @@
 #include "Tile.h"
 #include "NiagaraComponent.h"
 #include  "NiagaraSystem.h"
+#include "Components/DecalComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/TextRenderComponent.h"
-#include "Components/TextRenderComponent.h"
-
 
 // Sets default values
 ATile::ATile()
@@ -14,7 +13,8 @@ ATile::ATile()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	outline = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Outline"));
+	outline = CreateDefaultSubobject<UDecalComponent>(TEXT("Outline"));
+	outline->SetRelativeRotation(FRotator(90.f, 0.0f, 0.0f));
 	RootComponent = outline;
 
 	VFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("VFX"));
@@ -25,11 +25,11 @@ ATile::ATile()
 	VisualElementMeshComp->SetupAttachment(RootComponent);
 	VisualElementMeshComp->SetVisibility(false);
 	//VisualElementMeshComp->SetRelativeScale3D(FVector(4.0f)); // DA ELIMINARE
-	
+
 	VisualElementVFXComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("VisualElementVFXComp"));
 	VisualElementVFXComp->SetupAttachment(RootComponent);
 	VisualElementVFXComp->SetVisibility(false);
-	
+
 	coordsText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Coords"));
 	coordsText->SetupAttachment(RootComponent);
 	coordsText->SetRelativeLocation(FVector(0.0f, 50.0f, 0.0f));
@@ -91,11 +91,13 @@ void ATile::SpawnTile(FTileData _tileData, TArray<UObject*> elements)
 {
 	InitTileData(_tileData);
 	InitVisualElement(elements);
-	
+
 	//coordsText->SetText(FText::FromString(FString::Printf(TEXT("X: %d, Y: %d"), tileData.GridTileData.Index.X, tileData.GridTileData.Index.Y)));
 	coordsText->SetText(FText::FromString(TEXT("")));
 
-	outline->SetStaticMesh(tileData.Outline);
+	//outline->SetStaticMesh(tileData.Outline);
+	outline->SetDecalMaterial(tileData.Outline);
+	outline->DecalSize = FVector(50.0f, 53.0f, 53.0f);
 	VFX->SetAsset(tileData.VFX);
 	VFX->SetActive(false);
 
@@ -146,14 +148,25 @@ void ATile::UpdateOutline()
 
 	FLinearColor colorBorder = FLinearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	FLinearColor colorFill = FLinearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	outline->CreateAndSetMaterialInstanceDynamic(0)->SetScalarParameterValue(FName("Fill"), 1.0f);
+	//outline->CreateAndSetMaterialInstanceDynamic(0)->SetScalarParameterValue(FName("Fill"), 1.0f);
+	//outline->CreateDynamicMaterialInstance()->SetScalarParameterValue(FName("Fill"), 1.0f);
 
+	UMaterialInstanceDynamic* mat = outline->CreateDynamicMaterialInstance();
+	mat->SetScalarParameterValue(FName("Fill"), 1.0f);
+	outline->SetMaterial(0, mat);
+
+	
 	switch (s)
 	{
 	case ETileStatus::Highlight:
 		colorBorder = FLinearColor(0.5f, 0.5f, 0.5f);
 		colorFill = colorBorder;
-		outline->CreateAndSetMaterialInstanceDynamic(0)->SetScalarParameterValue(FName("Fill"), 0.5f);
+		//outline->CreateAndSetMaterialInstanceDynamic(0)->SetScalarParameterValue(FName("Fill"), 0.5f);
+		//outline->CreateDynamicMaterialInstance()->SetScalarParameterValue(FName("Fill"), 0.5f);
+		
+		//mat = outline->CreateDynamicMaterialInstance();
+		mat->SetScalarParameterValue(FName("Fill"), 0.5f);
+		outline->SetMaterial(0, mat);
 
 		break;
 	case ETileStatus::Hovered:
@@ -170,12 +183,27 @@ void ATile::UpdateOutline()
 		break;
 	default:
 	case ETileStatus::None:
-		outline->CreateAndSetMaterialInstanceDynamic(0)->SetScalarParameterValue(FName("Fill"), 0.0f);
+		//outline->CreateAndSetMaterialInstanceDynamic(0)->SetScalarParameterValue(FName("Fill"), 0.0f);
+		
+		//mat = outline->CreateDynamicMaterialInstance();
+		mat->SetScalarParameterValue(FName("Fill"), 0.0f);
+		outline->SetMaterial(0, mat);
+		
 		break;
 	}
 
-	outline->CreateAndSetMaterialInstanceDynamic(0)->SetVectorParameterValue(FName("Color_Border"), colorBorder);
-	outline->CreateAndSetMaterialInstanceDynamic(0)->SetVectorParameterValue(FName("Color_Fill"), colorFill);
+	//outline->CreateAndSetMaterialInstanceDynamic(0)->SetVectorParameterValue(FName("Color_Border"), colorBorder);
+	//outline->CreateDynamicMaterialInstance()->SetVectorParameterValue(FName("Fill"), colorBorder);
+	//mat = outline->CreateDynamicMaterialInstance();
+	mat->SetVectorParameterValue(FName("Color_Border"), colorBorder);
+	outline->SetMaterial(0, mat);
+	
+	
+	//outline->CreateAndSetMaterialInstanceDynamic(0)->SetVectorParameterValue(FName("Color_Fill"), colorFill);
+	//outline->CreateDynamicMaterialInstance()->SetVectorParameterValue(FName("Fill"), colorFill);
+	//mat = outline->CreateDynamicMaterialInstance();
+	mat->SetVectorParameterValue(FName("Color_Fill"), colorFill);
+	outline->SetMaterial(0, mat);
 }
 
 void ATile::AddOutlineStatus(ETileStatus newStatus)
@@ -207,22 +235,21 @@ void ATile::SpawnVisualElement(EMaskType MaskType)
 	if (VisualTileTypeElements.Find(MaskType))
 	{
 		UObject** obj = VisualTileTypeElements.Find(MaskType);
-		
+
 		if (!*obj || !obj)
 			return;
-		
-		
-		
+
+
 		UStaticMesh* mesh = Cast<UStaticMesh>(*obj);
 		if (mesh)
 		{
 			VisualElementMeshComp->SetStaticMesh(mesh);
 			VisualElementMeshComp->SetVisibility(true);
 		}
-		else 
+		else
 		{
 			UNiagaraSystem* niagara = Cast<UNiagaraSystem>(*obj);
-			
+
 			if (niagara)
 			{
 				VisualElementVFXComp->SetAsset(niagara);
@@ -233,8 +260,7 @@ void ATile::SpawnVisualElement(EMaskType MaskType)
 				UE_LOG(LogTemp, Error, TEXT("the visual element in this mask - %hhd - is not compatible"), MaskType)
 			}
 		}
-		
-		
+
 
 		switch (MaskType)
 		{
